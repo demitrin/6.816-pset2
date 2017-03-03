@@ -34,15 +34,19 @@ interface BreadBox {
  */
 public class BreadHouse {
    /*
-    * TODO: Add fields to keep track of kitchen table notes here!
     * All fields accessed by both threads must be Atomic classes from
     * java.util.concurrent.atomic
     */
-    private AtomicBoolean exampleField;
-    
+    private AtomicBoolean s1;
+    private AtomicBoolean s2;
+    private AtomicBoolean a1;
+    private AtomicBoolean a2;
+
     public BreadHouse() {
-        // TODO: Implement me!
-        exampleField = new AtomicBoolean(false);
+        s1 = new AtomicBoolean(false);
+        s2 = new AtomicBoolean(false);
+        a1 = new AtomicBoolean(false);
+        a2 = new AtomicBoolean(false);
     }
     
    /*
@@ -58,7 +62,21 @@ public class BreadHouse {
     *            A reference to the breadbox which must be refilled.
     */
     public void alex(BreadBox box) {
-        // TODO: Implement me!
+        a1.set(true);
+
+        if (s2.get()) {
+            a2.set(true);
+        } else {
+            a2.set(false);
+        }
+
+        while (s1.get() && ((a2.get() && s2.get()) || (!a2.get() && !s2.get()))) {}
+
+        if (box.isEmpty()) {
+            box.addLoaf();
+        }
+
+        a1.set(false);
 	}
 	
    /*
@@ -74,6 +92,20 @@ public class BreadHouse {
     *            A reference to the breadbox which must be refilled.
     */
     public void sam(BreadBox box) {
-        // TODO: Implement me!
+        s1.set(true);
+
+        if (!a2.get()) {
+            s2.set(true);
+        } else {
+            s2.set(false);
+        }
+
+        while (a1.get() && ((a2.get() && !s2.get()) || (!a2.get() && s2.get()))) {}
+
+        if (box.isEmpty()) {
+            box.addLoaf();
+        }
+
+        s1.set(false);
 	}
 }
